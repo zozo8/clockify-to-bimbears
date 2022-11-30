@@ -4,9 +4,35 @@ import { OutTable, ExcelRenderer } from 'react-excel-renderer';
 
 class ClockifyToTimeSheet extends React.Component {
   state = {
-    cols: [],
     rows: [],
+    cols: [],
   };
+
+  constructor(props) {
+    super(props);
+    console.log(this.state);
+    this.setState({ rows: this.toBimbearsTs(this.state.rows) });
+  }
+
+  toBimbearsTs(rows: any[][]) {
+    let date;
+    const outputRows = [
+      [
+        'Date',
+        'Team / Project',
+        'Title / Product Backlog Item / Bug / Task',
+        'Time Spent (h)',
+      ],
+    ];
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][0]) {
+        date = rows[i][0];
+      } else {
+        outputRows.push([date, 'Treasury', rows[i][1], rows[i][3]]);
+      }
+    }
+    return outputRows;
+  }
 
   fileHandler = (event) => {
     let fileObj = event.target.files[0];
@@ -18,7 +44,7 @@ class ClockifyToTimeSheet extends React.Component {
       } else {
         this.setState({
           cols: resp.cols,
-          rows: resp.rows,
+          rows: this.toBimbearsTs(resp.rows),
         });
       }
     });
